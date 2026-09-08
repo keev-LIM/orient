@@ -1,0 +1,227 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/orient-tool/orient/schema/facts.schema.json",
+  "title": "orient facts",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "generated_at",
+    "root",
+    "config",
+    "snapshot",
+    "files",
+    "entry_points",
+    "modules",
+    "hotspots",
+    "flags",
+    "owners",
+    "history",
+    "warnings"
+  ],
+  "properties": {
+    "schema_version": { "type": "integer" },
+    "generated_at": { "type": "string" },
+    "root": { "type": "string" },
+    "narrative": { "type": "object" },
+    "config": {
+      "type": "object",
+      "required": ["since", "top", "include", "exclude", "max_files"],
+      "properties": {
+        "since": { "type": "string" },
+        "window_days": { "type": "integer" },
+        "top": { "type": "integer" },
+        "include": { "type": "array", "items": { "type": "string" } },
+        "exclude": { "type": "array", "items": { "type": "string" } },
+        "max_files": { "type": "integer" }
+      }
+    },
+    "snapshot": {
+      "type": "object",
+      "required": ["files_tracked", "files_analyzed", "files_other", "lines", "bytes", "languages"],
+      "properties": {
+        "files_tracked": { "type": "integer" },
+        "files_analyzed": { "type": "integer" },
+        "files_other": { "type": "integer" },
+        "test_files": { "type": "integer" },
+        "lines": { "type": "integer" },
+        "bytes": { "type": "integer" },
+        "unreadable": { "type": "integer" },
+        "unparsed": { "type": "integer" },
+        "truncated": { "type": "boolean" },
+        "languages": { "type": "object" }
+      }
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "lang", "lines", "bytes", "is_test"],
+        "properties": {
+          "path": { "type": "string" },
+          "lang": { "type": "string" },
+          "lines": { "type": "integer" },
+          "bytes": { "type": "integer" },
+          "is_test": { "type": "boolean" },
+          "module": { "type": ["string", "null"] },
+          "imports": { "type": "array", "items": { "type": "string" } },
+          "defs": { "type": "array", "items": { "type": "string" } },
+          "classes": { "type": "integer" },
+          "functions": { "type": "integer" },
+          "max_nesting": { "type": "integer" },
+          "parsed": { "type": "boolean" },
+          "secret_hits": { "type": "integer" },
+          "fan_in": { "type": "integer" },
+          "fan_out": { "type": "integer" },
+          "importers": { "type": "array", "items": { "type": "string" } },
+          "internal": { "type": "array", "items": { "type": "string" } },
+          "external": { "type": "array", "items": { "type": "string" } },
+          "stdlib": { "type": "array", "items": { "type": "string" } },
+          "commits": { "type": "integer" },
+          "authors": { "type": "object" },
+          "last": { "type": ["string", "null"] },
+          "churn": { "type": "integer" },
+          "test_ratio": { "type": "number" }
+        }
+      }
+    },
+    "entry_points": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "kind", "detail", "confidence"],
+        "properties": {
+          "path": { "type": "string" },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "console_script",
+              "main_guard",
+              "web_route",
+              "wsgi_asgi",
+              "django_manage",
+              "docker_cmd",
+              "make_target",
+              "ci_step"
+            ]
+          },
+          "detail": { "type": "string" },
+          "confidence": { "type": "number" }
+        }
+      }
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "files", "lines", "languages"],
+        "properties": {
+          "path": { "type": "string" },
+          "files": { "type": "integer" },
+          "lines": { "type": "integer" },
+          "languages": { "type": "array", "items": { "type": "string" } },
+          "fan_in": { "type": "integer" },
+          "fan_out": { "type": "integer" },
+          "commits": { "type": "integer" },
+          "authors": { "type": "array", "items": { "type": "string" } },
+          "has_tests": { "type": "boolean" }
+        }
+      }
+    },
+    "hotspots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "score", "commits", "lines", "fan_in", "test_ratio", "reasons"],
+        "properties": {
+          "path": { "type": "string" },
+          "score": { "type": "integer" },
+          "commits": { "type": "integer" },
+          "authors": { "type": "integer" },
+          "lines": { "type": "integer" },
+          "max_nesting": { "type": "integer" },
+          "fan_in": { "type": "integer" },
+          "fan_out": { "type": "integer" },
+          "test_ratio": { "type": "number" },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "high_churn",
+                "high_fan_in",
+                "large_file",
+                "deep_nesting",
+                "thin_tests",
+                "no_tests"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "flags": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["flag", "path", "detail"],
+        "properties": {
+          "flag": {
+            "type": "string",
+            "enum": ["bus_factor_1", "no_tests", "god_file", "dead_ish", "config_surface"]
+          },
+          "path": { "type": "string" },
+          "detail": { "type": "string" }
+        }
+      }
+    },
+    "owners": {
+      "type": "object",
+      "required": ["path", "available", "files", "commits", "authors"],
+      "properties": {
+        "path": { "type": "string" },
+        "available": { "type": "boolean" },
+        "files": { "type": "integer" },
+        "commits": { "type": "integer" },
+        "authors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "commits", "share"],
+            "properties": {
+              "name": { "type": "string" },
+              "commits": { "type": "integer" },
+              "share": { "type": "number" },
+              "last": { "type": ["string", "null"] },
+              "inactive_months": { "type": "integer" }
+            }
+          }
+        }
+      }
+    },
+    "history": {
+      "type": "object",
+      "required": ["available", "commits", "authors", "window_days"],
+      "properties": {
+        "available": { "type": "boolean" },
+        "reason": { "type": ["string", "null"] },
+        "head": { "type": ["string", "null"] },
+        "latest": { "type": ["string", "null"] },
+        "commits": { "type": "integer" },
+        "window_days": { "type": "integer" },
+        "authors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "commits"],
+            "properties": {
+              "name": { "type": "string" },
+              "commits": { "type": "integer" },
+              "last": { "type": ["string", "null"] }
+            }
+          }
+        }
+      }
+    },
+    "warnings": { "type": "array", "items": { "type": "string" } }
+  }
+}
